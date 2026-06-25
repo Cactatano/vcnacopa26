@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VCtv na Copa 2026</title>
+<style>
+  :root {
+    --verde:   #009C3B;
+    --amarelo: #FFD700;
+    --azul:    #002776;
+    --verm:    #CC1424;
+    --bg:      #080808;
+    --bg2:     #111111;
+    --bg3:     #1a1a1a;
+    --txt:     #EEEEEE;
+    --sub:     #888888;
+    --borda:   #2a2a2a;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--txt);
+    font-family: 'Segoe UI', Arial, sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ── TOPO / HEADER ──────────────────────────────────────── */
+  .header {
+    background: var(--bg2);
+    border-bottom: 3px solid var(--verm);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    gap: 12px;
+  }
+
+  .logo {
+    font-size: 2.1rem;
+    font-weight: 900;
+    letter-spacing: -1px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .logo .v { color: var(--verm); }
+  .logo .ctv { color: #fff; }
+
+  .header-title {
+    text-align: center;
+    flex: 1;
+  }
+  .header-title .badge {
+    display: inline-block;
+    background: linear-gradient(90deg, var(--verde), #005c22);
+    color: #fff;
+    font-size: .62rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    padding: 2px 8px;
+    border-radius: 3px;
+    text-transform: uppercase;
+  }
+  .header-title h1 {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.1;
+    margin-top: 2px;
+  }
+  .header-title .sub {
+    font-size: .65rem;
+    color: var(--sub);
+    letter-spacing: 1px;
+  }
+
+  .bandeira {
+    font-size: 1.8rem;
+    flex-shrink: 0;
+  }
+
+  /* Faixa verde-amarela decorativa */
+  .stripe {
+    height: 5px;
+    background: linear-gradient(90deg,
+      var(--verde) 0%, var(--verde) 33%,
+      var(--amarelo) 33%, var(--amarelo) 66%,
+      var(--verde) 66%);
+  }
+
+  /* ── SELETOR DE DATA ──────────────────────────────────────── */
+  .date-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--borda);
+  }
+
+  .date-btn {
+    background: var(--bg2);
+    border: 1px solid var(--borda);
+    color: var(--sub);
+    padding: 5px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: .78rem;
+    transition: all .2s;
+  }
+  .date-btn:hover { border-color: var(--verde); color: var(--verde); }
+
+  .date-label {
+    font-size: .88rem;
+    font-weight: 700;
+    color: #fff;
+    text-align: center;
+    min-width: 160px;
+  }
+
+  /* ── CONTEÚDO PRINCIPAL ──────────────────────────────────── */
+  .main { padding: 14px 14px 40px; max-width: 520px; margin: 0 auto; }
+
+  /* ── LOADING ─────────────────────────────────────────────── */
+  .loading {
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--sub);
+  }
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--borda);
+    border-top-color: var(--verde);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 14px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── ERRO / AVISO ────────────────────────────────────────── */
+  .msg-box {
+    background: var(--bg2);
+    border: 1px solid var(--borda);
+    border-left: 4px solid var(--verm);
+    border-radius: 8px;
+    padding: 16px;
+    margin: 10px 0;
+    font-size: .85rem;
+    color: var(--sub);
+    text-align: center;
+  }
+  .msg-box strong { color: var(--txt); display: block; margin-bottom: 4px; }
+
+  /* ── SEÇÃO ────────────────────────────────────────────────── */
+  .section-label {
+    font-size: .62rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--sub);
+    text-transform: uppercase;
+    margin: 20px 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--borda);
+  }
+
+  /* ── CARD DE JOGO ─────────────────────────────────────────── */
+  .match-card {
+    background: var(--bg2);
+    border: 1px solid var(--borda);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    transition: border-color .2s;
+  }
+  .match-card:hover { border-color: #333; }
+  .match-card.destaque { border-color: var(--verde); }
+
+  .match-status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 12px;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--borda);
+  }
+  .status-pill {
+    font-size: .6rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 2px 7px;
+    border-radius: 20px;
+    text-transform: uppercase;
+  }
+  .status-pill.encerrado { background: #222; color: var(--sub); }
+  .status-pill.ao-vivo   { background: var(--verm); color: #fff; animation: pulse 1.5s infinite; }
+  .status-pill.aguardando{ background: #1a2a1a; color: var(--verde); }
+  @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:.6 } }
+
+  .match-group { font-size: .65rem; color: var(--sub); }
+  .match-hora  { font-size: .7rem; color: var(--sub); }
+
+  .match-body {
+    display: flex;
+    align-items: center;
+    padding: 14px 12px;
+    gap: 8px;
+  }
+
+  .team {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-align: center;
+  }
+  .team-logo {
+    width: 44px; height: 44px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,.5));
+  }
+  .team-logo-placeholder {
+    width: 44px; height: 44px;
+    background: var(--bg3);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+    color: var(--sub);
+    border: 1px solid var(--borda);
+  }
+  .team-name {
+    font-size: .78rem;
+    font-weight: 700;
+    color: var(--txt);
+    line-height: 1.1;
+  }
+  .team-abrev {
+    font-size: .65rem;
+    color: var(--sub);
+  }
+
+  .placar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 80px;
+    flex-shrink: 0;
+  }
+  .placar-nums {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .gol {
+    font-size: 2.1rem;
+    font-weight: 900;
+    color: #fff;
+    line-height: 1;
+    min-width: 32px;
+    text-align: center;
+  }
+  .placar-sep {
+    font-size: 1.1rem;
+    color: var(--sub);
+    font-weight: 300;
+  }
+  .placar-info {
+    font-size: .6rem;
+    color: var(--sub);
+    margin-top: 3px;
+  }
+
+  .ganhador .team-name { color: var(--verde); }
+  .gol.ganhador-gol    { color: var(--amarelo); }
+
+  /* ── TABELA DE GRUPOS ─────────────────────────────────────── */
+  .group-card {
+    background: var(--bg2);
+    border: 1px solid var(--borda);
+    border-radius: 10px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .group-header {
+    background: var(--bg3);
+    border-bottom: 1px solid var(--borda);
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .group-letter {
+    width: 26px; height: 26px;
+    background: var(--verde);
+    border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .75rem;
+    font-weight: 900;
+    color: #fff;
+  }
+  .group-name { font-size: .82rem; font-weight: 700; color: #fff; }
+
+  table.standings {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .72rem;
+  }
+  table.standings thead tr {
+    border-bottom: 1px solid var(--borda);
+  }
+  table.standings th {
+    color: var(--sub);
+    font-weight: 600;
+    padding: 5px 8px;
+    text-align: center;
+  }
+  table.standings th:first-child { text-align: left; padding-left: 12px; width: 40%; }
+  table.standings td {
+    padding: 7px 8px;
+    text-align: center;
+    border-bottom: 1px solid #1c1c1c;
+    color: var(--txt);
+  }
+  table.standings td:first-child { text-align: left; padding-left: 12px; }
+  table.standings tr:last-child td { border-bottom: none; }
+
+  .pos-num { color: var(--sub); margin-right: 6px; }
+  .pos-avanca .pos-num { color: var(--verde); }
+  .pos-eliminado .pos-num { color: var(--verm); }
+  .td-pts { font-weight: 800; color: var(--amarelo); }
+  .td-flag { font-size: 1rem; margin-right: 4px; }
+
+  /* ── RODAPÉ ──────────────────────────────────────────────── */
+  .footer {
+    text-align: center;
+    padding: 20px;
+    color: var(--sub);
+    font-size: .65rem;
+    border-top: 1px solid var(--borda);
+    margin-top: 10px;
+  }
+  .footer strong { color: var(--verm); }
+
+  /* ── TABS ─────────────────────────────────────────────────── */
+  .tabs {
+    display: flex;
+    gap: 0;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--borda);
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 10px;
+    background: none;
+    border: none;
+    color: var(--sub);
+    font-size: .78rem;
+    font-weight: 700;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all .2s;
+    letter-spacing: .5px;
+  }
+  .tab-btn.active {
+    color: #fff;
+    border-bottom-color: var(--verde);
+  }
+  .tab-btn:hover { color: #ccc; }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ── VAI BRASIL DESTAQUE ─────────────────────────────────── */
+  .brasil-card {
+    background: linear-gradient(135deg, #003d18 0%, #002010 100%);
+    border: 1px solid var(--verde);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .brasil-flag { font-size: 2.4rem; }
+  .brasil-info { flex: 1; }
+  .brasil-titulo { font-size: .95rem; font-weight: 800; color: var(--verde); }
+  .brasil-sub { font-size: .72rem; color: #7ab87a; margin-top: 2px; }
+  .brasil-placar-mini { font-size: .8rem; font-weight: 700; color: var(--amarelo); margin-top: 4px; }
+
+  /* responsive */
+  @media (max-width: 360px) {
+    .gol { font-size: 1.7rem; }
+    .team-name { font-size: .7rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ─────────────────────────────────────────────────────────────── -->
+<header class="header">
+  <div class="header-top">
+    <div class="logo"><span class="v">V</span><span class="ctv">Ctv</span></div>
+    <div class="header-title">
+      <div class="badge">🏆 Copa 2026</div>
+      <h1>VCtv na Copa</h1>
+      <div class="sub">COBERTURA DIÁRIA</div>
+    </div>
+    <div class="bandeira">🇧🇷</div>
+  </div>
+  <div class="stripe"></div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('jogos')">⚽ Jogos</button>
+    <button class="tab-btn" onclick="showTab('grupos')">📊 Grupos</button>
+  </div>
+</header>
+
+<!-- ── SELETOR DE DATA ─────────────────────────────────────────────────────── -->
+<div class="date-bar">
+  <button class="date-btn" onclick="mudarData(-1)">&#8249; Anterior</button>
+  <div class="date-label" id="dateLbl">—</div>
+  <button class="date-btn" onclick="mudarData(+1)">Próximo &#8250;</button>
+</div>
+
+<!-- ── CONTEÚDO ─────────────────────────────────────────────────────────────── -->
+<div class="main">
+
+  <!-- Tab Jogos -->
+  <div id="tab-jogos" class="tab-content active">
+    <div id="jogos-content">
+      <div class="loading">
+        <div class="spinner"></div>
+        <div>Buscando jogos...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Grupos -->
+  <div id="tab-grupos" class="tab-content">
+    <div id="grupos-content">
+      <div class="loading">
+        <div class="spinner"></div>
+        <div>Buscando grupos...</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ── RODAPÉ ──────────────────────────────────────────────────────────────── -->
+<footer class="footer">
+  <strong>VCtv</strong> • vctv.news • Copa do Mundo FIFA 2026<br>
+  Dados via ESPN · Atualizado automaticamente
+</footer>
+
+<script>
+// ── Estado ───────────────────────────────────────────────────────────────────
+let dataAtual = new Date();
+dataAtual.setDate(dataAtual.getDate() - 1); // ontem por padrão
+
+// ── Tabs ─────────────────────────────────────────────────────────────────────
+function showTab(nome) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  document.getElementById('tab-' + nome).classList.add('active');
+  if (nome === 'grupos') carregarGrupos();
+}
+
+// ── Data ─────────────────────────────────────────────────────────────────────
+function mudarData(d) {
+  dataAtual.setDate(dataAtual.getDate() + d);
+  atualizarLabel();
+  carregarJogos();
+}
+
+function atualizarLabel() {
+  const dias = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const meses = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  const hoje = new Date();
+  const ontem = new Date(hoje); ontem.setDate(hoje.getDate()-1);
+
+  let prefixo = '';
+  if (dataAtual.toDateString() === hoje.toDateString())   prefixo = 'Hoje, ';
+  else if (dataAtual.toDateString() === ontem.toDateString()) prefixo = 'Ontem, ';
+  else prefixo = dias[dataAtual.getDay()] + ', ';
+
+  document.getElementById('dateLbl').textContent =
+    prefixo + dataAtual.getDate() + ' ' + meses[dataAtual.getMonth()] + ' ' + dataAtual.getFullYear();
+}
+
+function dataESPN() {
+  const y = dataAtual.getFullYear();
+  const m = String(dataAtual.getMonth()+1).padStart(2,'0');
+  const d = String(dataAtual.getDate()).padStart(2,'0');
+  return `${y}${m}${d}`;
+}
+
+// ── Emojis de bandeira ────────────────────────────────────────────────────────
+function flagEmoji(abbr) {
+  const flags = {
+    BRA:'🇧🇷', ARG:'🇦🇷', GER:'🇩🇪', FRA:'🇫🇷', ENG:'🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+    ESP:'🇪🇸', POR:'🇵🇹', ITA:'🇮🇹', NED:'🇳🇱', URU:'🇺🇾',
+    MEX:'🇲🇽', USA:'🇺🇸', JPN:'🇯🇵', KOR:'🇰🇷', AUS:'🇦🇺',
+    MAR:'🇲🇦', SEN:'🇸🇳', GHA:'🇬🇭', CMR:'🇨🇲', TUN:'🇹🇳',
+    QAT:'🇶🇦', IRN:'🇮🇷', SUI:'🇨🇭', BEL:'🇧🇪', CRO:'🇭🇷',
+    DEN:'🇩🇰', POL:'🇵🇱', WAL:'🏴󠁧󠁢󠁷󠁬󠁳󠁿', ECU:'🇪🇨', CAN:'🇨🇦',
+    GHA:'🇬🇭', SAU:'🇸🇦', CMR:'🇨🇲', COL:'🇨🇴', PAN:'🇵🇦',
+    VEN:'🇻🇪', CRC:'🇨🇷', PAR:'🇵🇾', BOL:'🇧🇴', CHI:'🇨🇱',
+    PER:'🇵🇪', HON:'🇭🇳', JAM:'🇯🇲', TRI:'🇹🇹', HAI:'🇭🇹',
+  };
+  return flags[abbr] || '🌐';
+}
+
+// ── Carregar Jogos ────────────────────────────────────────────────────────────
+async function carregarJogos() {
+  const container = document.getElementById('jogos-content');
+  container.innerHTML = `<div class="loading"><div class="spinner"></div><div>Buscando jogos...</div></div>`;
+
+  try {
+    const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard?dates=${dataESPN()}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('API indisponível');
+    const data = await res.json();
+
+    const eventos = data.events || [];
+    if (eventos.length === 0) {
+      container.innerHTML = `
+        <div class="msg-box">
+          <strong>Sem jogos nesta data</strong>
+          Nenhuma partida encontrada para este dia.
+        </div>`;
+      return;
+    }
+
+    let html = '';
+
+    // Destaque Brasil
+    const brasils = eventos.filter(e =>
+      e.competitions?.[0]?.competitors?.some(c => c.team?.abbreviation === 'BRA')
+    );
+    if (brasils.length > 0) {
+      for (const ev of brasils) {
+        const comp = ev.competitions[0];
+        const home = comp.competitors.find(c => c.homeAway === 'home');
+        const away = comp.competitors.find(c => c.homeAway === 'away');
+        const bra  = comp.competitors.find(c => c.team?.abbreviation === 'BRA');
+        const adv  = comp.competitors.find(c => c.team?.abbreviation !== 'BRA');
+        const st   = comp.status?.type?.description || '';
+        const enc  = st.toLowerCase().includes('final') || st.toLowerCase().includes('encerr');
+
+        html += `<div class="brasil-card">
+          <div class="brasil-flag">🇧🇷</div>
+          <div class="brasil-info">
+            <div class="brasil-titulo">Jogo do Brasil!</div>
+            <div class="brasil-sub">${flagEmoji(adv?.team?.abbreviation)} ${adv?.team?.displayName || 'Adversário'}</div>
+            ${enc ? `<div class="brasil-placar-mini">Placar: ${home?.score || 0} × ${away?.score || 0}</div>` : ''}
+          </div>
+        </div>`;
+      }
+    }
+
+    // Agrupar por status
+    const aoVivo   = eventos.filter(e => {
+      const s = e.competitions?.[0]?.status?.type?.state;
+      return s === 'in';
+    });
+    const encerr   = eventos.filter(e => {
+      const s = e.competitions?.[0]?.status?.type?.state;
+      return s === 'post';
+    });
+    const futuros  = eventos.filter(e => {
+      const s = e.competitions?.[0]?.status?.type?.state;
+      return s === 'pre';
+    });
+
+    function renderJogo(ev) {
+      const comp = ev.competitions?.[0];
+      if (!comp) return '';
+      const home  = comp.competitors?.find(c => c.homeAway === 'home');
+      const away  = comp.competitors?.find(c => c.homeAway === 'away');
+      const state = comp.status?.type?.state;
+      const desc  = comp.status?.type?.description || '';
+      const group = ev.season?.slug || '';
+
+      const homeSc = parseInt(home?.score ?? '');
+      const awaySc = parseInt(away?.score ?? '');
+      const enc = state === 'post';
+      const vivo= state === 'in';
+      const homeWin = enc && homeSc > awaySc;
+      const awayWin = enc && awaySc > homeSc;
+
+      let pilula = '';
+      if (vivo)  pilula = `<span class="status-pill ao-vivo">🔴 Ao vivo</span>`;
+      else if (enc) pilula = `<span class="status-pill encerrado">Encerrado</span>`;
+      else pilula = `<span class="status-pill aguardando">Em breve</span>`;
+
+      let hora = '';
+      if (ev.date) {
+        const d = new Date(ev.date);
+        hora = d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'}) + 'h';
+      }
+
+      const logoH = home?.team?.logo
+        ? `<img class="team-logo" src="${home.team.logo}" alt="" onerror="this.outerHTML='<div class=team-logo-placeholder>${flagEmoji(home.team.abbreviation)}</div>'">`
+        : `<div class="team-logo-placeholder">${flagEmoji(home?.team?.abbreviation)}</div>`;
+
+      const logoA = away?.team?.logo
+        ? `<img class="team-logo" src="${away.team.logo}" alt="" onerror="this.outerHTML='<div class=team-logo-placeholder>${flagEmoji(away.team.abbreviation)}</div>'">`
+        : `<div class="team-logo-placeholder">${flagEmoji(away?.team?.abbreviation)}</div>`;
+
+      return `
+      <div class="match-card ${home?.team?.abbreviation === 'BRA' || away?.team?.abbreviation === 'BRA' ? 'destaque' : ''}">
+        <div class="match-status-bar">
+          ${pilula}
+          <span class="match-group">${ev.name ? ev.name.split(' vs ')[0].trim() + ' × ' + ev.name.split(' vs ')[1]?.trim() : ''}</span>
+          <span class="match-hora">${hora}</span>
+        </div>
+        <div class="match-body">
+          <div class="team ${homeWin ? 'ganhador' : ''}">
+            ${logoH}
+            <div class="team-name">${home?.team?.shortDisplayName || home?.team?.displayName || '—'}</div>
+          </div>
+          <div class="placar">
+            ${enc || vivo ? `
+              <div class="placar-nums">
+                <span class="gol ${homeWin ? 'ganhador-gol' : ''}">${homeSc}</span>
+                <span class="placar-sep">×</span>
+                <span class="gol ${awayWin ? 'ganhador-gol' : ''}">${awaySc}</span>
+              </div>
+              <div class="placar-info">${desc}</div>
+            ` : `
+              <div class="placar-nums">
+                <span style="color:var(--sub);font-size:.8rem">vs</span>
+              </div>
+              <div class="placar-info">${hora || 'A definir'}</div>
+            `}
+          </div>
+          <div class="team ${awayWin ? 'ganhador' : ''}">
+            ${logoA}
+            <div class="team-name">${away?.team?.shortDisplayName || away?.team?.displayName || '—'}</div>
+          </div>
+        </div>
+      </div>`;
+    }
+
+    if (aoVivo.length > 0) {
+      html += `<div class="section-label">Ao vivo agora</div>`;
+      aoVivo.forEach(e => html += renderJogo(e));
+    }
+    if (encerr.length > 0) {
+      html += `<div class="section-label">Resultados</div>`;
+      encerr.forEach(e => html += renderJogo(e));
+    }
+    if (futuros.length > 0) {
+      html += `<div class="section-label">Próximos jogos</div>`;
+      futuros.forEach(e => html += renderJogo(e));
+    }
+
+    container.innerHTML = html;
+
+  } catch(err) {
+    container.innerHTML = `
+      <div class="msg-box">
+        <strong>Não foi possível carregar os jogos</strong>
+        Verifique sua conexão. Erro: ${err.message}
+      </div>`;
+  }
+}
+
+// ── Carregar Grupos ───────────────────────────────────────────────────────────
+async function carregarGrupos() {
+  const container = document.getElementById('grupos-content');
+  if (container.dataset.loaded === '1') return;
+
+  try {
+    const url = `https://site.api.espn.com/apis/v2/sports/soccer/fifa.world/standings`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Classificação indisponível');
+    const data = await res.json();
+
+    const grupos = data.children || [];
+    if (grupos.length === 0) throw new Error('Sem dados de grupos');
+
+    let html = '';
+    for (const grupo of grupos) {
+      const nome   = grupo.name || '';
+      const letra  = nome.replace('Group ', '').replace('Grupo ', '');
+      const times  = grupo.standings?.entries || [];
+
+      html += `<div class="group-card">
+        <div class="group-header">
+          <div class="group-letter">${letra}</div>
+          <div class="group-name">${nome}</div>
+        </div>
+        <table class="standings">
+          <thead>
+            <tr>
+              <th>#  Seleção</th>
+              <th>J</th><th>V</th><th>E</th><th>D</th>
+              <th>GP</th><th>GC</th><th>SG</th>
+              <th class="td-pts">Pts</th>
+            </tr>
+          </thead>
+          <tbody>`;
+
+      times.forEach((entry, i) => {
+        const stats = {};
+        (entry.stats || []).forEach(s => stats[s.name] = s.value);
+        const abbr = entry.team?.abbreviation || '';
+        const pos  = i + 1;
+        const cls  = pos <= 2 ? 'pos-avanca' : 'pos-eliminado';
+
+        html += `<tr>
+          <td class="${cls}">
+            <span class="pos-num">${pos}</span>
+            <span class="td-flag">${flagEmoji(abbr)}</span>
+            ${entry.team?.shortDisplayName || entry.team?.displayName || '—'}
+          </td>
+          <td>${stats['gamesPlayed'] ?? stats['GP'] ?? 0}</td>
+          <td>${stats['wins'] ?? stats['W'] ?? 0}</td>
+          <td>${stats['ties'] ?? stats['D'] ?? 0}</td>
+          <td>${stats['losses'] ?? stats['L'] ?? 0}</td>
+          <td>${stats['pointsFor'] ?? stats['GF'] ?? 0}</td>
+          <td>${stats['pointsAgainst'] ?? stats['GA'] ?? 0}</td>
+          <td>${stats['pointDifferential'] ?? stats['GD'] ?? 0}</td>
+          <td class="td-pts">${stats['points'] ?? stats['Pts'] ?? 0}</td>
+        </tr>`;
+      });
+
+      html += `</tbody></table></div>`;
+    }
+
+    container.innerHTML = html;
+    container.dataset.loaded = '1';
+
+  } catch(err) {
+    container.innerHTML = `
+      <div class="msg-box">
+        <strong>Não foi possível carregar os grupos</strong>
+        ${err.message}
+      </div>`;
+  }
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+atualizarLabel();
+carregarJogos();
+</script>
+
+</body>
+</html>
